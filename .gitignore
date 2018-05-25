@@ -1,0 +1,4 @@
+/functions/node_modules
+/.idea
+/functions/index.old.js
+/functions/service-account-credentials.json
