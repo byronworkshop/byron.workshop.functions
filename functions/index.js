@@ -13,8 +13,8 @@ const sharp = require('sharp');
 const promiseRetry = require('promise-retry');
 
 // thumbnail dimensions in pixels
-const THUMB_MAX_HEIGHT = 150;
-const THUMB_MAX_WIDTH = 150;
+const THUMB_MAX_HEIGHT = 250;
+const THUMB_MAX_WIDTH = 250;
 
 // thumbnail file prefix
 const THUMB_PREFIX = 'thumb_';
