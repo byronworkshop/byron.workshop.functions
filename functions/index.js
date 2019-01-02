@@ -2,10 +2,12 @@
 
 const functions = require('firebase-functions');
 
-const gcs = require('@google-cloud/storage')({keyFilename: 'service-account-credentials.json'});
+const {Storage} = require('@google-cloud/storage');
+const gcs = new Storage({keyFilename: 'service-account-credentials.json'});
 const admin = require('firebase-admin');
 admin.initializeApp();
 const db = admin.firestore();
+db.settings({ timestampsInSnapshots: true });
 
 const path = require('path');
 const sharp = require('sharp');
@@ -128,8 +130,7 @@ exports.generateThumbnail = functions.storage.object().onFinalize((object) => {
     // create Sharp pipeline for resizing the image and use pipe to read from bucket read stream
     const pipeline = sharp();
     pipeline
-        .resize(THUMB_MAX_WIDTH, THUMB_MAX_HEIGHT)
-        .max()
+        .resize(THUMB_MAX_WIDTH, THUMB_MAX_HEIGHT, {fit: "inside"})
         .pipe(thumbnailUploadStream);
 
     const bucketFilePath = bucket.file(filePath);
@@ -146,7 +147,7 @@ exports.generateThumbnail = functions.storage.object().onFinalize((object) => {
         // get the Signed URLs for the thumbnail and original image.
         const config = {
             action: 'read',
-            expires: '03-01-2500',
+            expires: '01-01-2025', // 2025
         };
 
         return Promise.all([
@@ -231,7 +232,7 @@ exports.deleteWorkOrder = functions.firestore.document('users/{uid}/work_orders/
     });
 
 exports.deleteWorkOrderImageFiles = functions.firestore.document('users/{uid}/work_orders/{woId}/file_repos/{woFormId}/images/{imageId}')
-    .onDelete((snap, context) => {
+    .onDelete((snap) => {
         const uploadedImage = snap.data();
 
         if (!uploadedImage || !uploadedImage.image) {
