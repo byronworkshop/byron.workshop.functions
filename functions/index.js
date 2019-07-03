@@ -252,4 +252,3 @@ exports.deleteWorkOrderImageFiles = functions.firestore.document('users/{uid}/wo
             bucket.file(thumbnailUrl).delete()
         ]);
     });
-	
